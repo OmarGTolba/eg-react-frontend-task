@@ -16,7 +16,6 @@ const initialState: UserState = {
   error: null,
 };
 
-// Fetch user profile
 export const fetchUserProfile = createAsyncThunk<UserProfile, void, { rejectValue: string }>(
   "user/fetchUserProfile",
   async (_, { rejectWithValue }) => {
@@ -30,7 +29,6 @@ export const fetchUserProfile = createAsyncThunk<UserProfile, void, { rejectValu
   }
 );
 
-// Update user profile
 export const updateProfile = createAsyncThunk<UserProfile, { id: string; data: Partial<UserProfile> }, { rejectValue: string }>(
   "user/updateProfile",
   async ({data,id}, { rejectWithValue }) => {
@@ -44,7 +42,6 @@ export const updateProfile = createAsyncThunk<UserProfile, { id: string; data: P
   }
 );
 
-// Delete user account
 export const deleteAccount = createAsyncThunk<void, string, { rejectValue: string }>(
   "user/deleteAccount",
   async (id, { rejectWithValue }) => {
