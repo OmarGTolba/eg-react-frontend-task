@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/", 
+  baseURL: import.meta.env.VITE_API_URL, 
   headers: {
     "Content-Type": "application/json",
   },
@@ -9,9 +9,8 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      const token = JSON.parse(user).token;
+    const token = localStorage.getItem("token");
+    if (token) {
       if (config.headers) config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
@@ -23,7 +22,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("user");
+      localStorage.removeItem("token");
     }
     return Promise.reject(error);
   }
