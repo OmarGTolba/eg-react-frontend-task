@@ -1,4 +1,3 @@
-import React from "react";
 import { Route } from "react-router-dom";
 import { AdminLayout } from "../modules/admin/AdminLayout";
 import ProtectedRoute from "./ProtectedRoutes";

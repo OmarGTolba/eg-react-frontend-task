@@ -36,7 +36,7 @@ const schema = yup.object({
 
 export const SignUpForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector(state => state.auth);
+  const { loading } = useAppSelector(state => state.auth);
   const navigate = useNavigate();
 
   const { control, handleSubmit, formState: { errors } } = useForm<SignUpFormValues>({

@@ -23,7 +23,7 @@ const schema = yup.object({
 
 export const SignInForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector(state => state.auth);
+  const { loading } = useAppSelector(state => state.auth);
   const navigate = useNavigate();
 
   const { control, handleSubmit, formState: { errors } } = useForm<SignInFormValues>({
@@ -89,8 +89,8 @@ export const SignInForm: React.FC = () => {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full py-3 rounded-xl bg-white text-blue-600 font-bold shadow-lg hover:bg-blue-50 transition"
-      >
+  
+        >
         {loading ? "Signing in..." : "Sign In"}
       </Button>
 
