@@ -4,11 +4,12 @@ import { SignInPage } from "../modules/auth/pages/SignInPage";
 import { ForgetPasswordPage } from "../modules/auth/pages/ForgetPassword";
 import { VerifyCodePage } from "../modules/auth/pages/VeridyCode";
 import { ResetPasswordPage } from "../modules/auth/pages/ResetPassword";
+import { ROUTES } from "../shared/constants";
 
 export const authRoutes = [
-  <Route path="/signup" element={<SignUpPage />} key="signup" />,
-  <Route path="/signin" element={<SignInPage />} key="signin" />,
-  <Route path="/forget-password" element={<ForgetPasswordPage />} key="forget" />,
-  <Route path="/verify-code" element={<VerifyCodePage />} key="verify" />,
-  <Route path="/reset-password" element={<ResetPasswordPage />} key="reset" />,
+  <Route path={ROUTES.SIGNUP} element={<SignUpPage />} key="signup" />,
+  <Route path={ROUTES.SIGNIN} element={<SignInPage />} key="signin" />,
+  <Route path={ROUTES.FORGET_PASSWORD} element={<ForgetPasswordPage />} key="forget" />,
+  <Route path={ROUTES.VERIFY_CODE} element={<VerifyCodePage />} key="verify" />,
+  <Route path={ROUTES.RESET_PASSWORD} element={<ResetPasswordPage />} key="reset" />,
 ];

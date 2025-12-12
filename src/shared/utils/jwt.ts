@@ -1,14 +1,18 @@
 import { jwtDecode } from "jwt-decode";
-
+import type { UserRole } from '../constants';
 
 interface JwtPayload {
   sub: string;
   email: string;
-  role: "admin" | "user";
+  role: UserRole;
   iat?: number;
   exp?: number;
 }
 
-export const decodeToken = (token: string): JwtPayload => {
-  return jwtDecode<JwtPayload>(token);
+export const decodeToken = (token: string): JwtPayload | null => {
+  try {
+    return jwtDecode<JwtPayload>(token);
+  } catch {
+    return null;
+  }
 };

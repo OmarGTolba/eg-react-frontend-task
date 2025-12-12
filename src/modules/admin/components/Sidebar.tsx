@@ -23,7 +23,7 @@ export const Sidebar: React.FC = () => {
       <div className="p-6 border-t border-gray-200">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="w-full text-left bg-gray-100 hover:bg-gray-200 transition p-3 rounded-lg text-gray-700 font-medium"
+          className="w-full text-left cursor-pointer bg-gray-100 hover:bg-gray-200 transition p-3 rounded-lg text-gray-700 font-medium"
         >
           Logout
         </button>

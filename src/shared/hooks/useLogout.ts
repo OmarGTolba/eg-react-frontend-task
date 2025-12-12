@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "./reduxHooks";
 import { logoutUser } from "../../store/authSlice";
+import { ROUTES } from "../constants";
 
 export const useLogout = () => {
   const dispatch = useAppDispatch();
@@ -9,8 +10,8 @@ export const useLogout = () => {
   const handleLogout = () => {
     dispatch(logoutUser())
       .unwrap()
-      .then(() => navigate("/login"))
-      .catch(() => navigate("/login"));
+      .then(() => navigate(ROUTES.SIGNIN))
+      .catch(() => navigate(ROUTES.SIGNIN));
   };
 
   return { handleLogout };

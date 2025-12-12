@@ -1,39 +1,53 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../shared/hooks/reduxHooks";
 import { resetPassword } from "../../../store/authSlice";
 import { Input } from "../../../shared/components/Input";
 import { Button } from "../../../shared/components/Button";
+import { resetPasswordSchema } from "../../../shared/utils/validation";
+import { ROUTES } from "../../../shared/constants";
 
 interface ResetPasswordFormValues {
-    password: string;
+    newPassword: string;
     confirmPassword: string;
 }
 
-const schema = yup.object({
-    password: yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
-    confirmPassword: yup.string().oneOf([yup.ref("password")], "Passwords do not match").required("Confirm your password"),
-}).required();
+interface LocationState {
+    email: string;
+    code: string;
+}
 
 export const ResetPasswordPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { loading, error } = useAppSelector(state => state.auth);
-    const email = (location.state as any)?.email;
+    const { loading } = useAppSelector(state => state.auth);
+    const state = location.state as LocationState;
+    
+    const email = state?.email;
+    const code = state?.code;
 
     const { control, handleSubmit, formState: { errors } } = useForm<ResetPasswordFormValues>({
-        resolver: yupResolver(schema),
-        defaultValues: { password: "", confirmPassword: "" },
+        resolver: yupResolver(resetPasswordSchema),
+        defaultValues: { newPassword: "", confirmPassword: "" },
     });
 
-    const onSubmit = (data: ResetPasswordFormValues) => {
-        dispatch(resetPassword({ email, newPassword: data.password }))
-            .unwrap()
-            .then(() => navigate("/login"));
+    const onSubmit = async (data: ResetPasswordFormValues) => {
+        if (!email || !code) {
+            toast.error("Invalid reset session. Please request a new password reset.");
+            navigate(ROUTES.FORGET_PASSWORD);
+            return;
+        }
+        
+        try {
+            await dispatch(resetPassword({ email, code, newPassword: data.newPassword })).unwrap();
+            toast.success("Password reset successfully!");
+            navigate(ROUTES.SIGNIN);
+        } catch {
+        }
     };
 
     return (
@@ -43,10 +57,10 @@ export const ResetPasswordPage: React.FC = () => {
                 <p className="text-center text-gray-500 mb-4">Enter your new password</p>
 
                 <Controller
-                    name="password"
+                    name="newPassword"
                     control={control}
                     render={({ field }) => (
-                        <Input label="New Password" type="password" {...field} error={errors.password?.message} className="bg-white/40 border border-gray-200" />
+                        <Input label="New Password" type="password" {...field} error={errors.newPassword?.message} className="bg-white/40 border border-gray-200" />
                     )}
                 />
 
@@ -58,9 +72,7 @@ export const ResetPasswordPage: React.FC = () => {
                     )}
                 />
 
-                {error && <p className="text-red-500 text-sm">{error}</p>}
-
-                <Button type="submit" disabled={loading} className="w-full py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
+                <Button type="submit" disabled={loading} className="w-full py-3 rounded-xl bg-blue-600 text-white font-bold shadow-lg hover:bg-blue-700 transition disabled:opacity-50">
                     {loading ? "Resetting..." : "Reset Password"}
                 </Button>
             </form>

@@ -29,10 +29,13 @@ export const Navbar: React.FC = () => {
         </div>
   
         <div className="flex gap-4 items-center">
+        
+        <Link to="profile" className="flex items-center gap-2 hover:text-gray-300">
          <FaRegUserCircle size={35} />
+        </Link>
 <div>
 
-          <Button onClick={openModal}>Logout</Button>
+          <Button className="cursor-pointer" onClick={openModal}>Logout</Button>
 </div>
    
         </div>

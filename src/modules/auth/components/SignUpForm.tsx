@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../shared/hooks/reduxHooks";
-import { signUpUser } from "../../../store/authSlice";
+import { signUpUser, clearError } from "../../../store/authSlice";
 import { Input } from "../../../shared/components/Input";
 import { Button } from "../../../shared/components/Button";
-
 import { useForm, Controller, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { signUpSchema } from "../../../shared/utils/validation";
+import { ROUTES } from "../../../shared/constants";
 
 interface SignUpFormValues {
   firstName: string;
@@ -17,30 +18,13 @@ interface SignUpFormValues {
   confirmPassword: string;
 }
 
-const schema = yup.object({
-  firstName: yup.string().min(2, "First name must be at least 2 characters").required("First name is required"),
-  lastName: yup.string().min(2, "Last name must be at least 2 characters").required("Last name is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[a-zA-Z]/, "Password must contain letters")
-    .matches(/[0-9]/, "Password must contain numbers")
-    .matches(/[^a-zA-Z0-9]/, "Password must contain special characters")
-    .required("Password is required"),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref("password")], "Passwords do not match")
-    .required("Please confirm your password"),
-}).required();
-
 export const SignUpForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { loading } = useAppSelector(state => state.auth);
+  const { loading, error } = useAppSelector(state => state.auth);
   const navigate = useNavigate();
 
   const { control, handleSubmit, formState: { errors } } = useForm<SignUpFormValues>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(signUpSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -50,13 +34,26 @@ export const SignUpForm: React.FC = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<SignUpFormValues> = (data) => {
-    dispatch(signUpUser({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      password: data.password,
-    }));
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
+  const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
+    try {
+      await dispatch(signUpUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+      })).unwrap();
+      
+      toast.success("Account created successfully!");
+      navigate(ROUTES.SIGNIN);
+    } catch {
+    }
   };
 
   return (
@@ -129,26 +126,26 @@ export const SignUpForm: React.FC = () => {
         )}
       />
 
-   
-
       <Button
         type="submit"
         disabled={loading}
-        className="w-full py-3 rounded-xl bg-blue-600 text-white font-bold shadow-lg hover:bg-blue-700 transition"
+        className="w-full py-3 rounded-xl bg-blue-600 text-white font-bold shadow-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Signing up..." : "Sign Up"}
       </Button>
 
-      <p className="text-center text-gray-600 text-sm mt-4">
-        Already have an account?{" "}
-        <span
-          className="text-blue-600 underline cursor-pointer font-medium"
-          onClick={() => navigate("/login")}
-        >
-          Sign In
-        </span>
-      </p>
-
+      <div className="text-center">
+        <p className="text-gray-600 text-sm">
+          Already have an account?{" "}
+          <button
+            type="button"
+            className="text-blue-600 underline hover:text-blue-700 transition font-medium"
+            onClick={() => navigate(ROUTES.SIGNIN)}
+          >
+            Sign In
+          </button>
+        </p>
+      </div>
     </form>
   );
 };
